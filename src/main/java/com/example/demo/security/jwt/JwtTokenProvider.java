@@ -35,6 +35,15 @@ public class JwtTokenProvider {
         secretKey = Base64.getEncoder().encodeToString(jwtProperties.getSecretKey().getBytes());
     }
 
+    /**
+     * Cria um token recebendo Username e roles como parametros.
+     * Seta um tempo de expiração no token antes de sua criação.
+     * Tempo de duração definido em JwtProperties
+     * @see JwtProperties
+     * @param username
+     * @param roles
+     * @return String - token gerado.
+     */
     public String createToken(String username, List<String> roles) {
 
         Claims claims = Jwts.claims().setSubject(username);
@@ -51,15 +60,32 @@ public class JwtTokenProvider {
             .compact();
     }
 
+    /**
+     *
+     * @param token
+     * @return UsernamePasswordAuthenticationToken Retorna um objeto contendo o nome de usuário e permissões.
+     */
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
+    /**
+     * Obtem o nome de usuário a partir de um token.
+     * @param token
+     * @return
+     */
     public String getUsername(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
+    /**
+     * Retorna apenas a 'assinatura' do token.
+     * Para retornar o token, além de pegar o conteudo do cabeçalho da requisão nomeado de Authorization,
+     * necessita que o token seja inicializado com a palavra 'Bearer '.
+     * @param req
+     * @return
+     */
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
@@ -68,6 +94,11 @@ public class JwtTokenProvider {
         return null;
     }
 
+    /**
+     * Realiza a validação do Token com base no tempo de expiração.
+     * @param token
+     * @return Boolean caso o tempo de expiração seja menor que o tempo da consulta.
+     */
     public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);

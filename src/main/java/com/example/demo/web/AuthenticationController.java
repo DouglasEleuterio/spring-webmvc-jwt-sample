@@ -32,6 +32,11 @@ public class AuthenticationController {
     @Autowired
     UserRepository users;
 
+    /**
+     * Realiza o login do usuário e retorna um objeto Map contendo username e token.
+     * @param data
+     * @return
+     */
     @PostMapping("/signin")
     public ResponseEntity signin(@RequestBody AuthenticationRequest data) {
 

@@ -24,6 +24,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
+    /**
+     * Configura os acessos aos Endpoints.
+     * Está liberado somente o acesso ao Endpoint de Login.
+     * Deixado os comentários nas liberações de acesso sem autenticação para estudo futuro da libreração para o Swagger.
+     * @param http
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //@formatter:off
@@ -34,9 +41,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
                 .authorizeRequests()
                 .antMatchers("/auth/signin").permitAll()
-                .antMatchers(HttpMethod.GET, "/vehicles/**").permitAll()
-                .antMatchers(HttpMethod.DELETE, "/vehicles/**").hasRole("ADMIN")
-                .antMatchers(HttpMethod.GET, "/v1/vehicles/**").permitAll()
+                //.antMatchers(HttpMethod.GET, "/vehicles/**").permitAll()
+                //.antMatchers(HttpMethod.DELETE, "/vehicles/**").hasRole("ADMIN")
+                //.antMatchers(HttpMethod.GET, "/v1/vehicles/**").permitAll()
                 .anyRequest().authenticated()
             .and()
             .apply(new JwtSecurityConfigurer(jwtTokenProvider));

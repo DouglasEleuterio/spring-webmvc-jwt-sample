@@ -15,6 +15,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.users = users;
     }
 
+    /**
+     * Retorna um UserDetail, podendo retornar uma Exception caso o nome de usuário não seja encontrado.
+     * @param username
+     * @return UserDetails
+     * @throws UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return this.users.findByUsername(username)
